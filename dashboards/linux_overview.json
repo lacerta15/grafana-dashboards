@@ -1,0 +1,35 @@
+{
+  "title": "Linux Host Overview",
+  "uid": "linux-overview",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "tags": ["linux","node","sysadmin"],
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "CPU Usage %",
+      "targets": [{"expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "CPU"}],
+      "fieldConfig": {"defaults": {"unit": "percent","thresholds": {"steps": [{"value": 0,"color":"green"},{"value":80,"color":"yellow"},{"value":90,"color":"red"}]}}}
+    },
+    {
+      "id": 2, "type": "stat", "title": "Memory Usage %",
+      "targets": [{"expr": "(1 - node_memory_MemAvailable_bytes/node_memory_MemTotal_bytes) * 100"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}}
+    },
+    {
+      "id": 3, "type": "stat", "title": "Disk Usage /",
+      "targets": [{"expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"}/node_filesystem_size_bytes{mountpoint=\"/\"}) * 100"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}}
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "CPU over time",
+      "targets": [{"expr": "100 - (avg by(instance)(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "{{instance}}"}]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Network I/O",
+      "targets": [
+        {"expr": "rate(node_network_receive_bytes_total{device!~\"lo|docker.*\"}[5m])", "legendFormat": "RX {{device}}"},
+        {"expr": "rate(node_network_transmit_bytes_total{device!~\"lo|docker.*\"}[5m])", "legendFormat": "TX {{device}}"}
+      ]
+    }
+  ]
+}
